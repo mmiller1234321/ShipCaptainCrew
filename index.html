@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Game</title>
+<style>
+    .container {
+        text-align: center;
+        margin-top: 50px;
+    }
+    .dice {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        border: 1px solid black;
+        margin: 0 5px;
+        font-size: 24px;
+        line-height: 50px;
+        text-align: center;
+    }
+    .ship, .captain, .crew {
+        display: inline-block;
+        margin: 10px;
+        border: 1px solid black;
+        padding: 5px;
+    }
+    .placed {
+        background-color: lightgray;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Dice Game</h2>
+    <div id="ship" class="ship">Ship:</div>
+    <div id="captain" class="captain">Captain:</div>
+    <div id="crew" class="crew">Crew:</div>
+    <div id="score"></div>
+    <div id="dice"></div>
+    <button onclick="rollDice()">Roll Dice</button>
+</div>
+
+<script>
+    // Initial labels for ship, captain, and crew sections
+    var shipLabel = document.getElementById("ship").innerHTML;
+    var captainLabel = document.getElementById("captain").innerHTML;
+    var crewLabel = document.getElementById("crew").innerHTML;
+
+    function rollDice() {
+        var ship = document.getElementById("ship");
+        var captain = document.getElementById("captain");
+        var crew = document.getElementById("crew");
+        var diceDiv = document.getElementById("dice");
+        var scoreDiv = document.getElementById("score");
+
+        ship.innerHTML = shipLabel;
+        captain.innerHTML = captainLabel;
+        crew.innerHTML = crewLabel;
+        scoreDiv.innerHTML = "";
+        diceDiv.innerHTML = "";
+
+        var dice = [];
+        var hasSix = false;
+        var hasFive = false;
+        var hasFour = false;
+
+        for (var i = 0; i < 5; i++) {
+            var roll = Math.floor(Math.random() * 6) + 1;
+            dice.push(roll);
+
+            var diceElement = document.createElement("div");
+            diceElement.classList.add("dice");
+            diceElement.textContent = roll;
+
+            if (roll === 6) {
+                if (!hasSix && !hasFive && !hasFour) {
+                    hasSix = true;
+                    ship.appendChild(diceElement);
+                    diceElement.classList.add("placed");
+                } else {
+                    diceDiv.appendChild(diceElement);
+                }
+            } else if (roll === 5) {
+                if (hasSix && !hasFive && !hasFour) {
+                    hasFive = true;
+                    captain.appendChild(diceElement);
+                    diceElement.classList.add("placed");
+                } else {
+                    diceDiv.appendChild(diceElement);
+                }
+            } else if (roll === 4) {
+                if (hasFive && !hasFour) {
+                    hasFour = true;
+                    crew.appendChild(diceElement);
+                    diceElement.classList.add("placed");
+                } else {
+                    diceDiv.appendChild(diceElement);
+                }
+            } else {
+                diceDiv.appendChild(diceElement);
+            }
+        }
+
+        if (hasSix && hasFive && hasFour) {
+            var score = calculateScore(ship, captain, crew);
+            displayResult(score);
+        } else {
+            scoreDiv.innerHTML = "No score, did not qualify";
+        }
+    }
+
+    function calculateScore(ship, captain, crew) {
+        var scoreDice = [
+            parseInt(ship.textContent),
+            parseInt(captain.textContent),
+            parseInt(crew.textContent)
+        ];
+        scoreDice.sort(function(a, b) {
+            return b - a;
+        });
+        return scoreDice[0] * 10 + scoreDice[1];
+    }
+
+    function displayResult(score) {
+        var scoreDiv = document.getElementById("score");
+        scoreDiv.innerHTML = "Your score is " + score;
+    }
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
