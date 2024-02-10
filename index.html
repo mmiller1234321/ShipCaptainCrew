@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,7 +62,6 @@
   <script>
     // Add JavaScript logic here
     let rollCounter = 0;
-    let score = 0;
     const rollBtn = document.getElementById('roll-btn');
     const rollCounterDisplay = document.getElementById('roll-counter');
     const scoreDisplay = document.getElementById('score');
@@ -76,15 +77,13 @@
     ];
 
     rollBtn.addEventListener('click', () => {
-      rollDice();
       rollCounter++;
       rollCounterDisplay.textContent = `Roll: ${rollCounter}`;
-      scoreDisplay.textContent = `Your score is: ${score}`;
+      rollDice();
     });
 
     function rollDice() {
       // Simulate rolling dice
-      score = 0; // Reset score before calculating
       const rolledNumbers = [];
       dice.forEach(die => {
         const randomNumber = Math.floor(Math.random() * 6) + 1;
@@ -92,49 +91,53 @@
         rolledNumbers.push(randomNumber);
       });
 
-      const sixIndex = rolledNumbers.indexOf(6);
-      const fiveIndex = rolledNumbers.indexOf(5);
-      const fourIndex = rolledNumbers.indexOf(4);
+      // Reset boxes
+      shipBox.textContent = '-';
+      captainBox.textContent = '-';
+      crewBox.textContent = '-';
 
+      let score = 'Did not qualify';
+
+      const sixIndex = rolledNumbers.indexOf(6);
       if (sixIndex !== -1) {
-        shipBox.textContent = rolledNumbers[sixIndex];
+        shipBox.textContent = 6;
         rolledNumbers.splice(sixIndex, 1); // Remove 6 from rolled numbers
 
+        const fiveIndex = rolledNumbers.indexOf(5);
         if (fiveIndex !== -1) {
-          captainBox.textContent = rolledNumbers[fiveIndex];
+          captainBox.textContent = 5;
           rolledNumbers.splice(fiveIndex, 1); // Remove 5 from rolled numbers
 
+          const fourIndex = rolledNumbers.indexOf(4);
           if (fourIndex !== -1) {
-            crewBox.textContent = rolledNumbers[fourIndex];
+            crewBox.textContent = 4;
             rolledNumbers.splice(fourIndex, 1); // Remove 4 from rolled numbers
-          } else {
-            crewBox.textContent = '-';
+            score = `${captainBox.textContent}${crewBox.textContent}`; // Score is the combination of captain and crew numbers
           }
-        } else {
-          captainBox.textContent = '-';
-          crewBox.textContent = '-';
         }
-      } else {
-        shipBox.textContent = '-';
-        captainBox.textContent = '-';
-        crewBox.textContent = '-';
       }
 
-      if (rolledNumbers.length === 2) {
-        const largerNumber = Math.max(rolledNumbers[0], rolledNumbers[1]);
-        const smallerNumber = Math.min(rolledNumbers[0], rolledNumbers[1]);
-        score = largerNumber * 10 + smallerNumber;
-      } else if (rolledNumbers.length === 1) {
-        score = rolledNumbers[0] * 11;
-      } else {
-        score = 'Did not qualify';
+      if (score !== 'Did not qualify' && rollCounter > 0) {
+        const remainingDice = rolledNumbers.slice(0, 2);
+        if (remainingDice.length === 2) {
+          const largerNumber = Math.max(remainingDice[0], remainingDice[1]);
+          const smallerNumber = Math.min(remainingDice[0], remainingDice[1]);
+          score = largerNumber * 10 + smallerNumber;
+        } else if (remainingDice.length === 1) {
+          score = remainingDice[0] * 11;
+        }
+      }
+
+      scoreDisplay.textContent = `Your score is: ${score}`;
+
+      if (score === 'Did not qualify' || score !== 'Did not qualify' && rollCounter > 0) {
+        rollCounter = 0; // Reset roll counter
+        rollCounterDisplay.textContent = `Roll: ${rollCounter}`;
       }
     }
   </script>
 </body>
 </html>
-
-
 
 
 
